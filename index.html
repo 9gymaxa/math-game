@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Παιχνίδι Πολλαπλασιασμού</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&display=swap');
+
+body{
+font-family:'Nunito',sans-serif;
+background:linear-gradient(135deg,#74ebd5 0%,#9face6 100%);
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+margin:0;
+padding:15px;
+}
+
+.container{
+background:white;
+border-radius:20px;
+padding:30px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+width:min(420px,100%);
+text-align:center;
+}
+
+h2{color:#4458dc}
+h1{font-size:2.3rem}
+
+input{
+width:100%;
+padding:12px;
+font-size:1.3rem;
+margin:10px 0;
+border-radius:10px;
+border:2px solid #ddd;
+text-align:center;
+}
+
+button{
+padding:12px 20px;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+margin:8px;
+}
+
+.start{background:#4facfe;color:white}
+.submit{background:#f6d365}
+.restart{background:#43e97b;color:white}
+
+.progress{
+height:10px;
+background:#eee;
+border-radius:10px;
+margin-bottom:15px;
+overflow:hidden;
+}
+
+.bar{
+height:100%;
+background:#4facfe;
+width:0%;
+transition:0.4s;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div id="setup">
+<h2>🚀 Παιχνίδι Πολλαπλασιασμού</h2>
+<p>Πόσες ερωτήσεις;</p>
+<input type="number" id="rounds" value="5" min="1">
+
+<p>Δυσκολία</p>
+
+<label><input type="radio" name="d" value="10" checked> Εύκολο</label><br>
+<label><input type="radio" name="d" value="20"> Μεσαίο</label><br>
+<label><input type="radio" name="d" value="50"> Δύσκολο</label><br><br>
+
+<button class="start" onclick="start()">Έναρξη</button>
+</div>
+
+<div id="game" style="display:none">
+
+<div class="progress"><div class="bar" id="bar"></div></div>
+
+<h1 id="question"></h1>
+
+<input type="number" id="answer">
+
+<button class="submit" onclick="check()">Απάντηση</button>
+
+<p id="feedback"></p>
+
+</div>
+
+<div id="result" style="display:none">
+<h2>Τέλος!</h2>
+<h1 id="score"></h1>
+<button class="restart" onclick="location.reload()">Ξανά</button>
+</div>
+
+</div>
+
+<script>
+
+let rounds=0
+let current=0
+let score=0
+let max=10
+let a=0
+let b=0
+
+function start(){
+
+rounds=parseInt(document.getElementById("rounds").value)
+
+document.querySelectorAll("input[name=d]").forEach(r=>{
+if(r.checked) max=parseInt(r.value)
+})
+
+document.getElementById("setup").style.display="none"
+document.getElementById("game").style.display="block"
+
+next()
+
+}
+
+function next(){
+
+if(current>=rounds){
+finish()
+return
+}
+
+current++
+
+a=Math.floor(Math.random()*max)+1
+b=Math.floor(Math.random()*max)+1
+
+document.getElementById("question").innerText=a+" × "+b
+
+document.getElementById("bar").style.width=((current-1)/rounds*100)+"%"
+
+document.getElementById("answer").value=""
+document.getElementById("feedback").innerText=""
+
+}
+
+function check(){
+
+let user=parseInt(document.getElementById("answer").value)
+
+if(user===a*b){
+
+score++
+document.getElementById("feedback").innerText="Σωστό!"
+
+}else{
+
+document.getElementById("feedback").innerText="Λάθος. Ήταν "+(a*b)
+
+}
+
+setTimeout(next,1000)
+
+}
+
+function finish(){
+
+document.getElementById("game").style.display="none"
+document.getElementById("result").style.display="block"
+
+document.getElementById("score").innerText=score+" / "+rounds
+
+confetti()
+
+}
+
+</script>
+
+</body>
+</html>
